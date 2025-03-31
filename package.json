@@ -1,17 +1,23 @@
 {
   "name": "cvs-coupon-scrape",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js"
   },
-  "keywords": [],
+  "keywords": [
+    "gmail",
+    "email",
+    "processing",
+    "personal"
+  ],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Personal tool to process labeled Gmail emails",
   "dependencies": {
     "@googleapis/gmail": "^12.0.0",
     "dotenv": "^16.4.7",
-    "google-auth-library": "^9.15.1"
+    "google-auth-library": "^9.15.1",
+    "open": "^10.1.0"
   }
 }
