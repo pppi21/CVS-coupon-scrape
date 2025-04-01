@@ -32,7 +32,7 @@ function formatDate(date) {
       const formattedDate = formatDate(sixDaysAgo);
       
       // Create a query to find emails with the CVS label from the last 6 days
-      const query = `label:CVS after:${formattedDate}`;
+      const query = `label:CVS subject:$4 Coupon! after:${formattedDate}`;
       
       console.log(`Fetching emails with query: ${query}`);
       
@@ -57,8 +57,15 @@ function formatDate(date) {
       );
       
       // Process in batches of 10 to avoid overwhelming the API
-      const emailData = [];
-      const batchSize = 10;
+      console.log(`Processing all ${emailDataPromises.length} emails simultaneously...`);
+    
+      // Process all emails at once instead of batching
+      const emailData = await Promise.all(emailDataPromises);
+      
+      console.log(`Completed processing ${emailData.length} emails`);
+
+
+      /* const batchSize = 10;
       
       for (let i = 0; i < emailDataPromises.length; i += batchSize) {
         const batch = emailDataPromises.slice(i, i + batchSize);
@@ -68,7 +75,7 @@ function formatDate(date) {
         // Simple progress logging
         console.log(`Processed ${Math.min(i + batchSize, emailDataPromises.length)} of ${emailDataPromises.length} emails`);
       }
-      
+      */
       return emailData;
     } catch (error) {
       console.error('Error fetching emails:', error);
