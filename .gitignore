@@ -10,6 +10,9 @@ token.json
 # Output files
 output/
 
+# Data
+data/
+
 # Logs
 *.log
 npm-debug.log*

@@ -30,24 +30,20 @@ const PORT = 3000;
  */
 async function getAuthenticatedGmail() {
   try {
-    // Load client secrets from environment variables
-    const credentials = {
-      client_id: process.env.CLIENT_ID,
-      client_secret: process.env.CLIENT_SECRET,
-      redirect_uris: [`http://localhost:${PORT}/oauth2callback`]
-    };
-    
     // Create OAuth2 client
-    const { client_secret, client_id, redirect_uris } = credentials;
     const oAuth2Client = new OAuth2Client(
-      client_id, client_secret, redirect_uris[0]
+      process.env.CLIENT_ID,
+      process.env.CLIENT_SECRET,
+      `http://localhost:${PORT}/oauth2callback`
     );
+    
 
     // Check if token already exists
     try {
       const token = await fs.readFile(TOKEN_PATH);
+
       oAuth2Client.setCredentials(JSON.parse(token));
-    } catch (err) {
+    } catch (error) {
       // If token doesn't exist, get a new one
       const token = await getNewToken(oAuth2Client);
       oAuth2Client.setCredentials(token);
