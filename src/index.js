@@ -26,14 +26,18 @@ async function main() {
     // Step 3: Process and display results
     if (emails.length > 0) {
       // Save email data to file
-      await saveEmailData(emails);
+      const phoneNumbers = await saveEmailData(emails);
+
+      phoneNumbers.forEach(number => {
+        console.log(number);
+      });
       
       // Display summary of emails
       printEmailSummary(emails);
     } else {
       console.log('No emails found matching the criteria.');
     }
-    
+
     console.log('\nGmail processing completed successfully.');
   } catch (error) {
     console.error('Error in main process:', error);

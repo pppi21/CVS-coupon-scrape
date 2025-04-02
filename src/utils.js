@@ -23,12 +23,13 @@ function formatTimestamp(date) {
 }
 
 /**
- * Saves email data to a JSON file with timestamp
+ * Saves email data to a JSON file with timestamp and maps recipient emails to phone numbers
  * 
  * @param {Array<Object>} emails - Array of email objects to save
- * @returns {Promise<string>} Path to the saved file
+ * @param {string} mappingFilePath - Path to the JSON file containing email-to-phone mappings
+ * @returns {Promise<{filePath: string, phoneNumbers: Array<string>}>} Object containing path to saved file and collected phone numbers
  */
-async function saveEmailData(emails) {
+async function saveEmailData(emails, mappingFilePath = path.join(process.cwd(), 'data', 'email-phone-map.json')) {
   try {
     // Create a directory for output if it doesn't exist
     const outputDir = path.join(process.cwd(), 'output');
@@ -47,7 +48,31 @@ async function saveEmailData(emails) {
     await fs.writeFile(filePath, JSON.stringify(emails, null, 2));
     
     console.log(`Saved ${emails.length} emails to ${filePath}`);
-    return filePath;
+    
+    // Load email-to-phone mapping
+    let emailToPhoneMap = {};
+    try {
+      const mappingData = await fs.readFile(mappingFilePath, 'utf8');
+      emailToPhoneMap = JSON.parse(mappingData);
+      console.log(`Loaded ${Object.keys(emailToPhoneMap).length} email-to-phone mappings`);
+    } catch (err) {
+      console.warn(`Warning: Could not load email-to-phone mapping from ${mappingFilePath}: ${err.message}`);
+      console.warn('Continuing without mapping functionality');
+    }
+    
+    // Collect phone numbers for matching emails
+    const phoneNumbers = [];
+    for (const email of emails) {
+      const toAddress = email.to;
+      if (toAddress && emailToPhoneMap[toAddress]) {
+        phoneNumbers.push(emailToPhoneMap[toAddress]);
+      }
+    }
+    
+    console.log(`Found ${phoneNumbers.length} matching phone numbers`);
+    
+    // Return the collected phone numbers
+    return phoneNumbers;
   } catch (error) {
     console.error('Error saving email data:', error);
     throw error;
@@ -62,19 +87,6 @@ async function saveEmailData(emails) {
 function printEmailSummary(emails) {
   console.log('\n===== Email Summary =====');
   console.log(`Total emails: ${emails.length}`);
-  
-  if (emails.length === 0) {
-    return;
-  }
-  
-  // Display each email with basic information
-  emails.forEach((email, index) => {
-    console.log(`\n--- Email ${index + 1} ---`);
-    console.log(`Subject: ${email.subject || 'N/A'}`);
-    console.log(`From: ${email.from || 'N/A'}`);
-    console.log(`To: ${email.to || 'N/A'}`);
-    console.log(`Date: ${email.date || 'N/A'}`);
-  });
 }
 
 module.exports = {

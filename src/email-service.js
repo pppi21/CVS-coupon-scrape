@@ -98,7 +98,7 @@ function formatDate(date) {
         userId: 'me',
         id: messageId,
         format: 'metadata',
-        metadataHeaders: ['Subject', 'From', 'To', 'Date']
+        metadataHeaders: ['To', 'Date']
       });
       
       const { headers } = response.data.payload;
@@ -106,8 +106,6 @@ function formatDate(date) {
       // Extract required fields from headers
       const emailData = {
         id: messageId,
-        subject: getHeaderValue(headers, 'Subject'),
-        from: getHeaderValue(headers, 'From'),
         to: getHeaderValue(headers, 'To'),
         date: getHeaderValue(headers, 'Date'),
         // Add internal date (Unix timestamp in milliseconds)
